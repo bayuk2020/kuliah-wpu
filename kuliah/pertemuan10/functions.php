@@ -24,3 +24,31 @@ function query($query)
 
   return $rows;
 }
+
+function tambah($data)
+{
+  // var_dump($data);
+  $conn = koneksi();
+
+
+  // htmlspecialchars mengubah inputan agar tidak mengeksekusi html
+  // untuk keamanan
+  $nama = htmlspecialchars($data['nama']);
+  $nim = htmlspecialchars($data['nim']);
+  $email = htmlspecialchars($data['email']);
+  $jurusan = htmlspecialchars($data['jurusan']);
+  $gambar = htmlspecialchars($data['gambar']);
+
+  $query = "INSERT INTO
+  mahasiswa
+  VALUES(null, '$nama', '$nim' , '$email', '$jurusan', '$gambar');
+  ";
+
+  mysqli_query($conn, $query);
+
+  //kalau gagal tampil eror
+  echo mysqli_error($conn);
+
+  // Memberitahu mysql ada baris yang berubah di db
+  return mysqli_affected_rows($conn);
+}

@@ -97,3 +97,25 @@ function ubah($data)
   // Memberitahu mysql ada baris yang berubah di db
   return mysqli_affected_rows($conn);
 }
+
+
+function cari($keyword)
+{
+
+  $conn = koneksi();
+
+  $query = "SELECT * FROM mahasiswa
+            WHERE nama LIKE '%$keyword%'
+            OR nim LIKE '%$keyword%'
+            OR jurusan LIKE '%$keyword%'";
+
+  $result = mysqli_query($conn, $query);
+
+  $rows = [];
+
+  while ($row = mysqli_fetch_assoc($result)) {
+    $rows[] = $row;
+  }
+
+  return $rows;
+}

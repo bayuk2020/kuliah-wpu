@@ -25,11 +25,84 @@ function query($query)
   return $rows;
 }
 
+// mengelola file yang di upload form
+function upload()
+{
+  $nama_file = $_FILES['gambar']['name'];
+  $tipe_file = $_FILES['gambar']['type'];
+  $ukuran_file = $_FILES['gambar']['size'];
+  $error = $_FILES['gambar']['error'];
+  $tmp_file = $_FILES['gambar']['tmp_name'];
+
+  // ketika tidak ada gambar yang dipilih
+  // kalau tidak ada gambar, error = 4
+  if ($error == 4) {
+    echo "<script>
+    alert('pilih gambar terlebih dahulu!');
+    </script>";
+    // supaya upload nya false, $gambar = false
+    return false;
+  }
+
+  // ketika yang di upload bukan gamber
+  // cek ekstensi file
+  $daftar_gambar = ['jpg', 'jpeg', 'png'];
+  // pecah nama file, menjadi array dipisahkan .
+  $ekstensi_file =  explode('.', $nama_file);
+  // ambil array yang terakhir, sebagai ekstensi (format file)
+  // jadikan huruf kecil semua
+  $ekstensi_file = strtolower(end($ekstensi_file));
+  // bandingkan nilai tsb apakah ada di dalam array atau tidak, dalam hal ini, dibandingkan dengan $daftar_gambar yang memuat ekstensi yang boleh masuk
+  // Jika nama file tidak ada di dalam array, dipastikan bukan gambar
+  // in_array('file_yang_dipunya', 'daftar_yang_boleh_masuk') mencari jarum di tumpukan jerami
+  if (!in_array($ekstensi_file, $daftar_gambar)) {
+    echo "<script>
+    alert('Yang Anda Pilih Bukan Gambar!');
+    </script>";
+    return false;
+  }
+
+  // ketika user upload script jahat tapi format file nya jpg
+  // cara menangani, cek type file
+  if ($tipe_file != 'image/jpeg' && $tipe_file != 'image/png') {
+    echo "<script>
+    alert('Yang Anda Pilih Bukan Gambar!');
+    </script>";
+    return false;
+  }
+
+  // Cek ukuran file, tidak boleh terlalu besar
+  // maksimal 1MB = 3.000.000 byte
+  if ($ukuran_file > 3000000) {
+    echo "<script>
+    alert('Ukuran gambar terlalu besar \\n Tidak boleh lebih dari 3MB!');
+    </script>";
+    return false;
+  }
+
+  // LOLOS PENGECEKKAN
+  // generate nama file baru (menghindari nama file sama)
+  $nama_file_baru = uniqid();
+  $nama_file_baru .= '.';
+  $nama_file_baru .= $ekstensi_file;
+
+  // memindahkan dari tempat penyimpanan sementara (tmp)
+  // ke tempat yang kita inginkan
+
+  move_uploaded_file($tmp_file, 'img/' . $nama_file_baru);
+
+  // return function dengan $nama_file_baru 
+  // supaya begitu file berhasil masuk ke $gambar di function
+  // berisi nama file, sehingga waktu di insert ke DB nama filenya masuk
+  return $nama_file_baru;
+}
+
+
+
 function tambah($data)
 {
   // var_dump($data);
   $conn = koneksi();
-
 
   // htmlspecialchars mengubah inputan agar tidak mengeksekusi html
   // untuk keamanan
@@ -37,7 +110,15 @@ function tambah($data)
   $nim = htmlspecialchars($data['nim']);
   $email = htmlspecialchars($data['email']);
   $jurusan = htmlspecialchars($data['jurusan']);
-  $gambar = htmlspecialchars($data['gambar']);
+  // $gambar = htmlspecialchars($data['gambar']);
+
+  // upload gambar
+  $gambar = upload();
+  // jika gambar false, return false
+  if (!$gambar) {
+    return false;
+    // ketika function tambah() = false, masuk ke tambah.php, dan data gagal ditambahkan
+  }
 
   $query = "INSERT INTO
   mahasiswa

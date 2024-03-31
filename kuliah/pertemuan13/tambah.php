@@ -20,7 +20,7 @@ if (isset($_POST['tambah'])) {
     document.location.href = 'index.php';
     </script>";
   } else {
-    echo "Data gagal ditambah!";
+    echo "Data gagal ditambahkan!";
   }
 }
 
@@ -37,12 +37,15 @@ if (isset($_POST['tambah'])) {
 
 <body>
   <h3>Form Tambah Data Mahasiswa</h3>
-  <form action="" method="POST">
+
+  <!-- Sebelum bekerja dengan file, harus menambahkan atribut pada form enctype="multipart/form-data" -->
+  <!-- Dengan menambahkan atribute tsb, kita dapat akses ke super global baru yang bernama $_FILES -->
+  <form action="" method="POST" enctype="multipart/form-data">
     <ul>
       <li>
         <label>
           Nama :
-          <input type="text" name="nama" autofocus required>
+          <input type=" text" name="nama" autofocus required>
         </label>
       </li>
       <li>
@@ -66,7 +69,7 @@ if (isset($_POST['tambah'])) {
       <li>
         <label>
           Gambar :
-          <input type="text" name="gambar" required>
+          <input type="file" name="gambar">
         </label>
       </li>
       <li>

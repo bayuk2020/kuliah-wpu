@@ -33,7 +33,10 @@ if (isset($_POST['ubah'])) {
     document.location.href = 'detail.php?id=$id';
     </script>";
   } else {
-    echo "Data gagal diubah!";
+    echo "<script>
+    alert('Tidak ada data yang diubah!');
+    document.location.href = 'detail.php?id=$id';
+    </script>";
   }
 }
 
@@ -50,7 +53,7 @@ if (isset($_POST['ubah'])) {
 
 <body>
   <h3>Form Ubah Data Mahasiswa</h3>
-  <form action="" method="POST">
+  <form action="" method="POST" enctype="multipart/form-data">
     <!-- Untuk mengetahui mahasiswa mana yang di edit -->
     <input type="hidden" name="id" value="<?= $mahasiswa['id']; ?>">
     <ul>
@@ -78,11 +81,21 @@ if (isset($_POST['ubah'])) {
           <input type="text" name="jurusan" required value="<?= $mahasiswa['jurusan']; ?>">
         </label>
       </li>
+
       <li>
+        <!-- Menangani ketika user tidak mau update gambar, misal cuma mau edit nama saja -->
+        <input type="hidden" name="gambar_lama" value="<?= $mahasiswa['gambar']; ?>">
+
         <label>
           Gambar :
-          <input type="text" name="gambar" required value="<?= $mahasiswa['gambar']; ?>">
+          <input type="file" name="gambar" class="gambar" onchange="previewImage()">
         </label>
+
+        <br><br>
+
+        <img src="img/<?= $mahasiswa['gambar']; ?>" width="120" alt="" style="display: block;" class="img-preview">
+
+        <br>
       </li>
       <li>
         <button type="submit" name="ubah">Ubah</button>
@@ -91,6 +104,10 @@ if (isset($_POST['ubah'])) {
   </form>
   <br>
   <a href="detail.php?id=<?= $mahasiswa['id']; ?>">Batal Ubah</a>
+
+
+  <script src="js/previewImage.js"></script>
+
 </body>
 
 </html>

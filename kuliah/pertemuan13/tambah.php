@@ -69,14 +69,24 @@ if (isset($_POST['tambah'])) {
       <li>
         <label>
           Gambar :
-          <input type="file" name="gambar">
+          <input type="file" name="gambar" class="gambar" onchange="previewImage()">
         </label>
+
+        <br><br>
+
+        <img src="img/user-default.png" width="120" alt="" style="display: block;" class="img-preview">
+
+        <br>
       </li>
       <li>
         <button type="submit" name="tambah">Tambah</button>
       </li>
     </ul>
   </form>
+  <!-- Ntah kenapa kalau digabungin dengan script.js malah error gamau jalan, yaudah gw sendiriin aja ke previewImage.js -->
+  <script src="js/previewImage.js"></script>
+
+
 </body>
 
 </html>

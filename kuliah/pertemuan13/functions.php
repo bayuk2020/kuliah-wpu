@@ -37,11 +37,11 @@ function upload()
   // ketika tidak ada gambar yang dipilih
   // kalau tidak ada gambar, error = 4
   if ($error == 4) {
-    echo "<script>
-    alert('pilih gambar terlebih dahulu!');
-    </script>";
+    // echo "<script>
+    // alert('pilih gambar terlebih dahulu!');
+    // </script>";
     // supaya upload nya false, $gambar = false
-    return false;
+    return 'user-default.png';
   }
 
   // ketika yang di upload bukan gamber
@@ -138,6 +138,16 @@ function hapus($id)
 {
   $conn = koneksi();
 
+  // menghapus gambar di folder img
+
+  // cari tahu nama gambar yang di hapus
+  $mahasiswa = query("SELECT * FROM mahasiswa WHERE id = $id");
+
+  // kalau gambar bukan no photo hapus, kalau no photo jangan
+  if ($mahasiswa['gambar'] != 'user-default.png') {
+    unlink('img/' . $mahasiswa['gambar']);
+  }
+
   mysqli_query($conn, "DELETE FROM mahasiswa WHERE id = $id") or die(mysqli_error($conn));
   // tips : jika terjadi error, bisa langsung terminate program
   // or die mysqli_error($conn) supaya tahu eror nya dimana
@@ -158,8 +168,37 @@ function ubah($data)
   $nim = htmlspecialchars($data['nim']);
   $email = htmlspecialchars($data['email']);
   $jurusan = htmlspecialchars($data['jurusan']);
-  $gambar = htmlspecialchars($data['gambar']);
+  $gambar_lama = htmlspecialchars($data['gambar_lama']);
 
+  // Untuk menangani ketika user mau upload gambar
+  $gambar = upload();
+
+
+  // error ini terjadi ketika ukuran file terlalu besar, yang di upload bukan gambar, dst
+  if (!$gambar) {
+    return false;
+  }
+
+  // kalau gambar = user-default ; timpa gambar dengan gambar lama
+  if ($gambar == 'user-default.png') {
+    $gambar = $gambar_lama;
+  }
+
+
+  // ketika edit, data gambar lama di img juga di hapus
+  $mahasiswa = query("SELECT * FROM mahasiswa WHERE id = $id");
+
+  // var_dump($gambar);
+  // var_dump($mahasiswa['gambar']);
+  // die;
+
+  // kalau gambar bukan no photo hapus, kalau no photo jangan
+  if (
+    $mahasiswa['gambar'] != 'user-default.png' &&
+    $mahasiswa['gambar'] != $gambar
+  ) {
+    unlink('img/' . $mahasiswa['gambar']);
+  }
 
   // meskipun hanya 1 field yang diubah, akan ditimpa semuanya dengan yang baru
   $query = "UPDATE mahasiswa SET
@@ -171,7 +210,6 @@ function ubah($data)
             WHERE id = $id";
 
   mysqli_query($conn, $query) or die(mysqli_error($conn));
-
   //kalau gagal tampil erornya
   // or die echo mysqli_error($conn);
 

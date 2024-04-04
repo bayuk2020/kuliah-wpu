@@ -188,11 +188,7 @@ function ubah($data)
   // ketika edit, data gambar lama di img juga di hapus
   $mahasiswa = query("SELECT * FROM mahasiswa WHERE id = $id");
 
-  // var_dump($gambar);
-  // var_dump($mahasiswa['gambar']);
-  // die;
-
-  // kalau gambar bukan no photo hapus, kalau no photo jangan
+  // kalau gambar bukan user-default hapus, kalau no photo jangan
   if (
     $mahasiswa['gambar'] != 'user-default.png' &&
     $mahasiswa['gambar'] != $gambar
